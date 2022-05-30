@@ -29,7 +29,7 @@ function checksCreateTodosUserAvailability(request, response, next) {
     return next();
   }
   return response
-    .status(400)
+    .status(403)
     .json({ error: "your account exceeded the free limits" });
 }
 
@@ -42,11 +42,11 @@ function checksTodoExists(request, response, next) {
     (user) =>
       (user.username === username)
   );
+  if (!validate(id)) {
+    return response.status(400).json({ error: "id must be UUID" });
+  }
   if (!user) {
     return response.status(404).json({ error: "User not found" });
-  }
-  if (!validate(id)) {
-    return response.status(404).json({ error: "id must be UUID" });
   }
   const todo = user.todos.find((todo) => todo.id === id);
   if (!todo) {
